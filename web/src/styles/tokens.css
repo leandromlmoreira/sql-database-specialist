@@ -1,0 +1,59 @@
+:root {
+  color-scheme: dark;
+
+  --bg: #08090c;
+  --bg-1: #0d0f13;
+  --bg-2: #111419;
+  --bg-3: #171b22;
+  --bg-4: #1e232c;
+  --line: rgba(255, 255, 255, 0.055);
+  --line-2: rgba(255, 255, 255, 0.09);
+  --line-3: rgba(255, 255, 255, 0.14);
+
+  --text: #eceef2;
+  --text-2: #b4bac5;
+  --text-3: #7e8694;
+  --text-4: #555c69;
+
+  --accent: #f5b544;
+  --accent-strong: #ffc766;
+  --accent-ink: #1b1305;
+  --accent-soft: rgba(245, 181, 68, 0.12);
+  --accent-line: rgba(245, 181, 68, 0.32);
+
+  --fk: #6fc3ff;
+  --fk-soft: rgba(111, 195, 255, 0.12);
+  --ok: #5ad6a0;
+  --ok-soft: rgba(90, 214, 160, 0.12);
+  --err: #ff7a70;
+  --err-soft: rgba(255, 122, 112, 0.1);
+  --violet: #b9a2ff;
+
+  --syntax-keyword: #c3a6ff;
+  --syntax-string: #8fdcae;
+  --syntax-number: #f5b544;
+  --syntax-type: #6fc3ff;
+  --syntax-function: #7fd8e8;
+
+  --active-line: rgba(255, 255, 255, 0.025);
+  --selection: rgba(245, 181, 68, 0.2);
+
+  --font-ui: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  --font-display: "Bricolage Grotesque", "Geist", ui-sans-serif, sans-serif;
+
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+
+  --shadow-panel: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 24px 48px -32px rgba(0, 0, 0, 0.7);
+  --shadow-pop: 0 18px 40px -18px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.04);
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+
+  --topbar: 56px;
+  --statusbar: 30px;
+  --gap: 10px;
+}
