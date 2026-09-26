@@ -27,7 +27,6 @@ INSERT INTO peca (descricao, valor_unitario, estoque) VALUES
     ('Amortecedor dianteiro', 180.00, 10),
     ('Fusivel 10A', 3.50, 500);
 
--- valor_total = soma da mao de obra aplicada + pecas usadas (calculado a partir de os_servico/os_servico_peca abaixo)
 INSERT INTO os (id_veiculo, id_cliente, data_emissao, data_conclusao, valor_total, status, autorizado_cliente, data_autorizacao) VALUES
     (1, 1, '2026-01-05', '2026-01-06', 245.00, 'concluida', TRUE, '2026-01-05 09:00:00'),
     (2, 2, '2026-02-10', NULL, 157.00, 'em_execucao', TRUE, '2026-02-10 08:30:00'),

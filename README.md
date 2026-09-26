@@ -1,49 +1,74 @@
-# Formação SQL Database Specialist — Desafios de Projeto
+# SQL Database Specialist
 
-Repositório com os 7 desafios de projeto da trilha [Formação SQL Database Specialist](https://web.dio.me/track/1a5a10ed-417c-4fef-8531-2097ff072817) (DIO). Todo o SQL foi **executado e validado** contra uma instância local MySQL 8.4.9 (porta 3307), não apenas escrito.
+Coleção de modelagens e consultas SQL para dois domínios de negócio — **e-commerce** e **oficina mecânica** — cobrindo desde a modelagem conceitual até indexação, controle de acesso, automação com triggers, transações e backup/recovery em MySQL.
 
-| # | Desafio | Conteúdo |
-|---|---|---|
-| 1 | [Refinando um Projeto Conceitual (E-commerce)](desafio-1-ecommerce-conceitual/) | Especialização PJ/PF, pagamento 1:N, entrega com status/rastreio — modelo EER + justificativas |
-| 2 | [Esquema Conceitual do Zero (Oficina Mecânica)](desafio-2-oficina-conceitual/) | Modelo EER completo a partir da narrativa: OS, equipe de mecânicos (N:M), serviços e peças |
-| 3 | [Primeiro Projeto Lógico (E-commerce)](desafio-3-ecommerce-logico/) | DDL + seed + queries (JOIN, HAVING, expressões derivadas, perguntas de negócio) |
-| 4 | [Projeto Lógico do Zero (Oficina)](desafio-4-oficina-logico/) | DDL + seed + queries para o modelo do Desafio 2 |
-| 5 | [Índices e Procedures (COMPANY)](desafio-5-indices-procedures/) | 5 índices justificados + procedure CRUD parametrizada com `CASE`/`IF` |
-| 6 | [Views, Permissões e Triggers](desafio-6-views-triggers-permissoes/) | 5 views + usuários `gerente_rh`/`funcionario_rh` com acesso diferenciado (testado de verdade) + 2 triggers de automação |
-| 7 | [Transações, Backup e Recovery](desafio-7-transacoes-backup/) | Transação simples, procedure com `SAVEPOINT`/`ROLLBACK` total e parcial, backup com `mysqldump` e recovery testado (drop + restore) |
+Todo o SQL foi **executado e validado** contra uma instância local MySQL 8.4, não apenas escrito.
 
-## Ambiente de teste
+## O que tem aqui
 
-MySQL Community 8.4.9 instalado localmente, rodando **isolado na porta 3307** (instância separada do banco de produção que já existia na 3306). Datadir em `D:\mysql-data-sql-challenges`, fora de qualquer pasta do sistema.
+| Módulo | Conteúdo |
+|---|---|
+| [Modelagem conceitual — E-commerce](desafio-1-ecommerce-conceitual/) | Especialização PJ/PF, pagamento 1:N, entrega com status/rastreio — modelo EER + justificativas |
+| [Modelagem conceitual — Oficina mecânica](desafio-2-oficina-conceitual/) | Modelo EER completo: OS, equipe de mecânicos (N:M), serviços e peças |
+| [Modelo lógico — E-commerce](desafio-3-ecommerce-logico/) | DDL + seed + queries (JOIN, HAVING, expressões derivadas, perguntas de negócio) |
+| [Modelo lógico — Oficina mecânica](desafio-4-oficina-logico/) | DDL + seed + queries para o domínio de OS/oficina |
+| [Índices e procedures (schema COMPANY)](desafio-5-indices-procedures/) | 5 índices justificados + procedure CRUD parametrizada com `CASE`/`IF` |
+| [Views, permissões e triggers](desafio-6-views-triggers-permissoes/) | 5 views + usuários com acesso diferenciado (testado de verdade) + 2 triggers de automação |
+| [Transações, backup e recovery](desafio-7-transacoes-backup/) | Transação simples, procedure com `SAVEPOINT`/`ROLLBACK` total e parcial, backup com `mysqldump` e recovery testado (drop + restore) |
 
-```bash
-mysql -u root --port=3307 --protocol=TCP
+## Exemplo
+
+Consulta que cruza pedidos e pagamentos para responder qual forma de pagamento mais movimenta em valor (de [`desafio-3-ecommerce-logico/queries.sql`](desafio-3-ecommerce-logico/queries.sql)):
+
+```sql
+SELECT forma, COUNT(*) AS qtd_transacoes, SUM(valor) AS total_movimentado
+FROM pagamento
+GROUP BY forma
+ORDER BY total_movimentado DESC;
 ```
 
-Ordem de execução recomendada (desafios 5/6/7 dependem de bancos criados por desafios anteriores):
+Resultado:
+
+| forma  | qtd_transacoes | total_movimentado |
+|--------|----------------|--------------------|
+| cartao | 2              | 1099.00            |
+| pix    | 2              | 241.70             |
+| boleto | 1              | 119.80             |
+
+## Stack
+
+MySQL 8.4 (todos os scripts usam sintaxe padrão MySQL: `ENUM`, `AUTO_INCREMENT`, procedures com `DELIMITER`, `SIGNAL`/`SAVEPOINT`, `CREATE USER`/`GRANT`).
+
+## Como rodar
+
+Cada módulo lógico (3, 4, 5) cria seu próprio schema com `CREATE DATABASE`. Os módulos 6 e 7 reaproveitam schemas criados por módulos anteriores, então a ordem de execução importa:
 
 ```bash
-# Desafio 3 (cria ecommerce_desafio, usado nos desafios 6 e 7)
+# Módulo 3 — cria ecommerce_desafio (usado nos módulos 6 e 7)
 mysql -u root --port=3307 --protocol=TCP < desafio-3-ecommerce-logico/schema.sql
 mysql -u root --port=3307 --protocol=TCP < desafio-3-ecommerce-logico/seed.sql
 
-# Desafio 4 (cria oficina_desafio, independente)
+# Módulo 4 — cria oficina_desafio, independente
 mysql -u root --port=3307 --protocol=TCP < desafio-4-oficina-logico/schema.sql
 mysql -u root --port=3307 --protocol=TCP < desafio-4-oficina-logico/seed.sql
 
-# Desafio 5 (cria company_desafio, usado no desafio 6)
+# Módulo 5 — cria company_desafio (usado no módulo 6)
 mysql -u root --port=3307 --protocol=TCP < desafio-5-indices-procedures/schema.sql
 mysql -u root --port=3307 --protocol=TCP < desafio-5-indices-procedures/seed.sql
 mysql -u root --port=3307 --protocol=TCP < desafio-5-indices-procedures/procedure.sql
 
-# Desafio 6 (views/permissoes em company_desafio, triggers em ecommerce_desafio)
+# Módulo 6 — views/permissões em company_desafio, triggers em ecommerce_desafio
 mysql -u root --port=3307 --protocol=TCP < desafio-6-views-triggers-permissoes/views.sql
 mysql -u root --port=3307 --protocol=TCP < desafio-6-views-triggers-permissoes/permissoes.sql
 mysql -u root --port=3307 --protocol=TCP < desafio-6-views-triggers-permissoes/triggers.sql
 
-# Desafio 7 (transacoes + backup/recovery em ecommerce_desafio)
+# Módulo 7 — transações + backup/recovery em ecommerce_desafio
 mysql -u root --port=3307 --protocol=TCP < desafio-7-transacoes-backup/transacao_simples.sql
 mysql -u root --port=3307 --protocol=TCP < desafio-7-transacoes-backup/procedure_transacao.sql
 ```
 
-Os desafios 1 e 2 são conceituais (README + diagrama Mermaid), sem SQL executável.
+Ajuste `--port`/host conforme sua instância MySQL local. Os módulos 1 e 2 são conceituais (README + diagrama Mermaid), sem SQL executável.
+
+---
+
+Base: desafios de projeto da trilha Formação SQL Database Specialist (DIO).

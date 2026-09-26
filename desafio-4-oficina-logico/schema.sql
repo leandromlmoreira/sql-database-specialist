@@ -1,6 +1,3 @@
--- Desafio 4 — Construa um Projeto Logico de Banco de Dados do Zero
--- Mapeamento logico do modelo conceitual do Desafio 2 (oficina mecanica)
-
 DROP DATABASE IF EXISTS oficina_desafio;
 CREATE DATABASE oficina_desafio CHARACTER SET utf8mb4;
 USE oficina_desafio;
@@ -55,7 +52,6 @@ CREATE TABLE os (
     CONSTRAINT fk_os_cliente FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente)
 );
 
--- N:M entre OS e mecanico (equipe)
 CREATE TABLE os_mecanico (
     numero_os INT NOT NULL,
     id_mecanico INT NOT NULL,

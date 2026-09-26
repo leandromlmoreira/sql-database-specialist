@@ -1,6 +1,3 @@
--- Desafio 3 — Construindo seu Primeiro Projeto Lógico de Banco de Dados
--- Mapeamento lógico do modelo conceitual refinado no Desafio 1 (e-commerce)
-
 DROP DATABASE IF EXISTS ecommerce_desafio;
 CREATE DATABASE ecommerce_desafio CHARACTER SET utf8mb4;
 USE ecommerce_desafio;
@@ -12,7 +9,6 @@ CREATE TABLE cliente (
     tipo ENUM('PF', 'PJ') NOT NULL
 );
 
--- Especializacao total e disjunta: cada cliente cai em exatamente uma das duas
 CREATE TABLE cliente_pf (
     id_cliente INT PRIMARY KEY,
     cpf CHAR(11) NOT NULL UNIQUE,
@@ -52,7 +48,6 @@ CREATE TABLE item_pedido (
     CONSTRAINT fk_item_produto FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
 );
 
--- Pedido 1:N Pagamento (pode ser pago em mais de uma forma)
 CREATE TABLE pagamento (
     id_pagamento INT AUTO_INCREMENT PRIMARY KEY,
     id_pedido INT NOT NULL,
