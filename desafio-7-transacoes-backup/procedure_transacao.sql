@@ -1,6 +1,3 @@
--- Desafio 7 — Parte 2: transacao dentro de uma procedure, com tratamento de erro
--- e ROLLBACK total (cliente inexistente) ou parcial via SAVEPOINT (item sem estoque)
-
 USE ecommerce_desafio;
 
 DROP PROCEDURE IF EXISTS sp_registrar_pedido;
@@ -22,7 +19,6 @@ BEGIN
     DECLARE v_item1_ok BOOLEAN DEFAULT FALSE;
     DECLARE v_item2_ok BOOLEAN DEFAULT FALSE;
 
-    -- Erro fatal (ex.: cliente inexistente via SIGNAL) -> desfaz a transacao inteira
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         ROLLBACK;
@@ -38,8 +34,6 @@ BEGIN
     INSERT INTO pedido (id_cliente, valor_total) VALUES (p_id_cliente, 0);
     SET v_id_pedido = LAST_INSERT_ID();
 
-    -- Item 1: se nao tiver estoque, desfaz SO esse item (ROLLBACK TO SAVEPOINT),
-    -- mas mantem o pedido e o outro item que ja deu certo
     SAVEPOINT sp_item1;
     SELECT valor_unitario, estoque INTO v_preco1, v_estoque1
     FROM produto WHERE id_produto = p_id_produto1 FOR UPDATE;
@@ -53,7 +47,6 @@ BEGIN
         ROLLBACK TO SAVEPOINT sp_item1;
     END IF;
 
-    -- Item 2: mesma logica, savepoint independente
     SAVEPOINT sp_item2;
     SELECT valor_unitario, estoque INTO v_preco2, v_estoque2
     FROM produto WHERE id_produto = p_id_produto2 FOR UPDATE;
@@ -78,20 +71,13 @@ END$$
 
 DELIMITER ;
 
--- ---- Testes ----
-
--- 1) Cenario feliz: os dois itens tem estoque -> commit total, os dois itens entram
 CALL sp_registrar_pedido(1, 2, 1, 4, 1, @msg);
 SELECT @msg AS cenario_1_ambos_itens_ok;
 
--- 2) Cenario de rollback PARCIAL: produto 3 (Monitor) tem estoque 15, pedimos 999999
---    (deve falhar so esse item via SAVEPOINT, mantendo o pedido e o item 2 valido)
 CALL sp_registrar_pedido(2, 3, 999999, 1, 1, @msg);
 SELECT @msg AS cenario_2_item1_sem_estoque_rollback_parcial;
 
--- 3) Cenario de rollback TOTAL: cliente inexistente (id 9999) -> nenhum pedido criado
 CALL sp_registrar_pedido(9999, 1, 1, 2, 1, @msg);
 SELECT @msg AS cenario_3_cliente_inexistente_rollback_total;
 
--- Verificacao: quantos pedidos existem para o cliente 9999 (deve ser 0, prova do rollback total)
 SELECT COUNT(*) AS pedidos_cliente_inexistente FROM pedido WHERE id_cliente = 9999;

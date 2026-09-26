@@ -1,8 +1,5 @@
 USE company_desafio;
 
--- Procedure CRUD parametrizada para a tabela employee.
--- p_operacao (variavel de controle) decide, via CASE, qual acao executar:
---   'I' = insere, 'U' = atualiza salario, 'D' = remove, 'S' = consulta por Ssn
 DROP PROCEDURE IF EXISTS sp_employee_crud;
 
 DELIMITER $$
@@ -61,8 +58,6 @@ BEGIN
 END$$
 
 DELIMITER ;
-
--- ---- Testes manuais da procedure ----
 
 CALL sp_employee_crud('I', '666666666', 'Paulo', 'Andrade', 4800.00, 3, @msg);
 SELECT @msg AS resultado;

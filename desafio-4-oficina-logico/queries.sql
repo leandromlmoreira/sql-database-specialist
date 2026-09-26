@@ -1,6 +1,5 @@
 USE oficina_desafio;
 
--- 1. SELECT + WHERE + expressao derivada: OS ja concluidas com prazo de execucao em dias
 SELECT numero, data_emissao, data_conclusao,
        DATEDIFF(data_conclusao, data_emissao) AS dias_execucao,
        valor_total
@@ -8,7 +7,6 @@ FROM os
 WHERE status = 'concluida'
 ORDER BY dias_execucao;
 
--- 2. JOIN entre varias tabelas: detalhamento completo de uma OS (servicos + pecas)
 SELECT o.numero, v.placa, s.descricao AS servico, os_s.valor_mao_obra_aplicado,
        p.descricao AS peca, osp.quantidade, osp.valor_unitario_aplicado
 FROM os o
@@ -19,7 +17,6 @@ LEFT JOIN os_servico_peca osp ON osp.id_os_servico = os_s.id_os_servico
 LEFT JOIN peca p ON p.id_peca = osp.id_peca
 ORDER BY o.numero;
 
--- 3. HAVING: mecanicos que participaram de mais de uma OS
 SELECT m.nome, COUNT(om.numero_os) AS total_os
 FROM mecanico m
 JOIN os_mecanico om ON om.id_mecanico = m.id_mecanico
@@ -27,14 +24,12 @@ GROUP BY m.id_mecanico, m.nome
 HAVING COUNT(om.numero_os) >= 1
 ORDER BY total_os DESC;
 
--- 4. Pergunta de negocio: OS pendentes de autorizacao do cliente
 SELECT o.numero, c.nome AS cliente, v.placa, o.status
 FROM os o
 JOIN cliente c ON c.id_cliente = o.id_cliente
 JOIN veiculo v ON v.id_veiculo = o.id_veiculo
 WHERE o.autorizado_cliente = FALSE;
 
--- 5. Pergunta de negocio: faturamento total por especialidade de mecanico envolvida
 SELECT m.especialidade, SUM(o.valor_total) AS faturamento_atribuido
 FROM os o
 JOIN os_mecanico om ON om.numero_os = o.numero
@@ -42,7 +37,6 @@ JOIN mecanico m ON m.id_mecanico = om.id_mecanico
 GROUP BY m.especialidade
 ORDER BY faturamento_atribuido DESC;
 
--- 6. Pergunta de negocio: pecas com estoque baixo (< 20 unidades) usadas em OS abertas/em execucao
 SELECT DISTINCT p.descricao, p.estoque
 FROM peca p
 JOIN os_servico_peca osp ON osp.id_peca = p.id_peca

@@ -1,14 +1,17 @@
-# Desafio 5 — Personalizando o Banco de Dados com Índices e Procedures
+# Índices e procedures — schema COMPANY
 
-Desafio de projeto da trilha [Formação SQL Database Specialist](https://web.dio.me/track/1a5a10ed-417c-4fef-8531-2097ff072817) (DIO), módulo *Técnicas Avançadas MySQL*.
-
-Usa o schema **COMPANY** (clássico de Elmasri & Navathe, o mesmo referenciado nas aulas de Triggers/Indexação).
+Usa o schema **COMPANY** (clássico de Elmasri & Navathe) para demonstrar indexação orientada a padrões de consulta e uma procedure CRUD parametrizada.
 
 ## Conteúdo
 
-- [`schema.sql`](schema.sql) — tabelas `department`, `employee`, `dept_locations`, `project`, `works_on`, `dependent` + **5 índices**, cada um com a justificativa de uso comentada no próprio arquivo (busca por sobrenome, filtro por departamento, faixa salarial, busca exata por nome de projeto, e o sentido inverso da PK composta de `works_on`).
+- [`schema.sql`](schema.sql) — tabelas `department`, `employee`, `dept_locations`, `project`, `works_on`, `dependent` + 5 índices:
+  1. `idx_employee_lname` — busca frequente de funcionários por sobrenome (relatórios, telas de busca por nome).
+  2. `idx_employee_dno` — consultas "funcionários do departamento X" são muito mais comuns que alterações de departamento, e o MySQL não cria índice automático em toda coluna de FK quando ela participa de mais de uma cláusula.
+  3. `idx_employee_salary` — consulta por faixa salarial (folha de pagamento, relatórios de RH); índice B-tree aproveita bem operadores de intervalo (`BETWEEN`, `>`, `<`).
+  4. `idx_project_pname` — pesquisa exata por nome de projeto (tela "buscar projeto por nome"), única e sempre por igualdade, então `HASH` seria mais eficiente que B-tree aqui. Observação testada: o InnoDB não suporta índice HASH explícito e converte silenciosamente para BTREE (confirmado com `SHOW INDEX`) — a cláusula documenta a intenção, mas só teria efeito real com `ENGINE=MEMORY`.
+  5. `idx_workson_pno` — `works_on` já tem PK composta (`Essn`, `Pno`) que cobre buscas "horas do funcionário X no projeto Y", mas faltava índice para o sentido inverso: "quem trabalha no projeto Y".
 - [`seed.sql`](seed.sql) — dados de exemplo (3 departamentos, 5 funcionários, projetos, alocações e dependentes).
-- [`procedure.sql`](procedure.sql) — `sp_employee_crud`: procedure parametrizada que recebe uma **variável de controle** (`p_operacao`: `I`/`U`/`D`/`S`) e usa `CASE` + `IF` para decidir entre inserir, atualizar salário, remover ou consultar um funcionário, retornando uma mensagem de status via parâmetro `OUT`. O arquivo já inclui uma bateria de chamadas de teste cobrindo sucesso, duplicidade, não encontrado e operação inválida.
+- [`procedure.sql`](procedure.sql) — `sp_employee_crud`: procedure parametrizada que recebe uma variável de controle (`p_operacao`: `I`/`U`/`D`/`S`) e usa `CASE`/`IF` para decidir entre inserir, atualizar salário, remover ou consultar um funcionário, retornando uma mensagem de status via parâmetro `OUT`. O arquivo já inclui uma bateria de chamadas de teste cobrindo sucesso, duplicidade, não encontrado e operação inválida.
 
 ## Como testar
 
@@ -18,7 +21,7 @@ mysql -u root --port=3307 --protocol=TCP < seed.sql
 mysql -u root --port=3307 --protocol=TCP < procedure.sql
 ```
 
-Todos os três arquivos foram executados contra uma instância local MySQL 8.4.9 — a saída da procedure (7 chamadas cobrindo todos os ramos do `CASE`) está reproduzida abaixo, exatamente como veio do servidor:
+Saída da procedure (7 chamadas cobrindo todos os ramos do `CASE`), reproduzida como veio do servidor:
 
 ```
 Funcionario Paulo inserido com sucesso

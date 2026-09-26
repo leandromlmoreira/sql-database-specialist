@@ -1,10 +1,6 @@
-# Desafio 2 — Construindo um Esquema Conceitual para Banco de Dados (Oficina Mecânica)
+# Modelagem conceitual — Oficina mecânica
 
-Desafio de projeto da trilha [Formação SQL Database Specialist](https://web.dio.me/track/1a5a10ed-417c-4fef-8531-2097ff072817) (DIO), módulo *Modelo de Entidade Relacional*.
-
-## Narrativa
-
-Uma oficina mecânica precisa de um sistema para controlar suas ordens de serviço (OS):
+Modelo conceitual (EER) para o controle de ordens de serviço (OS) de uma oficina mecânica:
 
 - Cada **OS** tem número, data de emissão, valor, status e data de conclusão.
 - Um **veículo** do cliente é atendido por uma **equipe de mecânicos** (não um só) — cada mecânico tem código, nome, endereço e especialidade.
@@ -95,4 +91,4 @@ erDiagram
 | Cliente precisa autorizar antes da execução | `OS.autorizado_cliente` (booleano) + `data_autorizacao`; regra de negócio (bloquear início sem autorização) fica na aplicação/trigger, não no EER |
 | Veículo pertence a um cliente, mas a OS referencia os dois | `OS` guarda `id_veiculo` e `id_cliente` como FK — redundante em relação a `VEICULO.id_cliente`, mas intencional: preserva o histórico caso o veículo mude de dono depois da OS ser fechada |
 
-O mapeamento lógico (DDL executável, com seed e queries) está no [Desafio 4](../desafio-4-oficina-logico/).
+O mapeamento lógico (DDL executável, com seed e queries) está em [`desafio-4-oficina-logico`](../desafio-4-oficina-logico/).

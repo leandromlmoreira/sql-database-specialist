@@ -1,10 +1,6 @@
-# Desafio 1 — Refinando um Projeto Conceitual de Banco de Dados (E-commerce)
+# Modelagem conceitual — E-commerce
 
-Desafio de projeto da trilha [Formação SQL Database Specialist](https://web.dio.me/track/1a5a10ed-417c-4fef-8531-2097ff072817) (DIO), módulo *Modelo de Entidade Relacional*.
-
-## Cenário
-
-O modelo conceitual de e-commerce apresentado nas aulas (`Cliente`, `Pedido`, `Produto`, `Pagamento`, `Entrega`) precisa de três refinamentos:
+Modelo conceitual (EER) de uma loja virtual, com três refinamentos sobre o modelo básico de e-commerce (`Cliente`, `Pedido`, `Produto`, `Pagamento`, `Entrega`):
 
 1. **Cliente PJ/PF** — uma conta é sempre **Pessoa Física OU Pessoa Jurídica**, nunca as duas. Isso é uma especialização **disjunta** e **total** (toda conta cai em uma das duas categorias).
 2. **Pagamento** — um pedido pode ter **mais de uma forma de pagamento** (ex.: parte no cartão, parte em boleto), então o relacionamento `Pedido`–`Pagamento` é **1:N**, e não 1:1.
@@ -68,4 +64,4 @@ erDiagram
 | Pagamento | Um pedido pode ser pago em partes/formas diferentes | Relacionamento **1:N** (`PEDIDO` 1 — N `PAGAMENTO`), com `PAGAMENTO.id_pedido` como FK; a soma dos `valor` dos pagamentos de um pedido deve bater com `PEDIDO.valor_total` (regra de negócio validada em aplicação/trigger, não representável só no EER) |
 | Entrega | Precisa rastrear o envio | `ENTREGA` ganha `status` (enum controlado) e `codigo_rastreio`; mantido 1:1 com `PEDIDO` pois cada pedido gera exatamente uma entrega neste escopo |
 
-O mapeamento lógico (DDL executável) desses refinamentos está implementado e testado no [Desafio 3](../desafio-3-ecommerce-logico/), que reaproveita este modelo.
+O mapeamento lógico (DDL executável) desses refinamentos está implementado e testado em [`desafio-3-ecommerce-logico`](../desafio-3-ecommerce-logico/), que reaproveita este modelo.
