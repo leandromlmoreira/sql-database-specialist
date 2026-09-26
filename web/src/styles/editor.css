@@ -1,0 +1,56 @@
+.sql-editor {
+  position: absolute;
+  inset: 0;
+}
+
+.sql-editor .cm-editor {
+  height: 100%;
+}
+
+.sql-editor .cm-gutters {
+  position: relative;
+}
+
+.sql-editor .cm-gutters::after {
+  content: "";
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  right: 0;
+  width: 1px;
+  background: var(--line);
+}
+
+.tok-keyword {
+  color: var(--syntax-keyword);
+}
+
+.tok-string,
+.tok-string2 {
+  color: var(--syntax-string);
+}
+
+.tok-number,
+.tok-bool,
+.tok-atom {
+  color: var(--syntax-number);
+}
+
+.tok-typeName {
+  color: var(--syntax-type);
+}
+
+.tok-comment {
+  color: var(--text-4);
+  font-style: italic;
+}
+
+.tok-punctuation,
+.tok-operator {
+  color: var(--text-3);
+}
+
+.tok-variableName.tok-definition,
+.tok-variableName2 {
+  color: var(--syntax-function);
+}
