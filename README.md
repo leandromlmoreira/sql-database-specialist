@@ -1,5 +1,9 @@
 # SQL Database Specialist
 
+[Ver ao vivo](https://leandromlmoreira.github.io/sql-database-specialist/) — playground SQL do módulo de e-commerce, rodando no navegador.
+
+[![Preview do SQL Playground](docs/preview.png)](https://leandromlmoreira.github.io/sql-database-specialist/)
+
 Coleção de modelagens e consultas SQL para dois domínios de negócio — **e-commerce** e **oficina mecânica** — cobrindo desde a modelagem conceitual até indexação, controle de acesso, automação com triggers, transações e backup/recovery em MySQL.
 
 Todo o SQL foi **executado e validado** contra uma instância local MySQL 8.4, não apenas escrito.
@@ -68,6 +72,18 @@ mysql -u root --port=3307 --protocol=TCP < desafio-7-transacoes-backup/procedure
 ```
 
 Ajuste `--port`/host conforme sua instância MySQL local. Os módulos 1 e 2 são conceituais (README + diagrama Mermaid), sem SQL executável.
+
+## Playground SQL (web)
+
+A pasta [`web/`](web/) tem um playground em navegador para o modelo lógico de e-commerce (desafio 3): SQLite compilado para WebAssembly (via `sql.js`) roda inteiramente no cliente, já carregado com o schema e o seed do módulo, adaptados de MySQL para a sintaxe SQLite (sem alterar os `.sql` originais). O visitante escolhe uma consulta real do repositório — com a pergunta de negócio que ela responde —, edita o SQL com destaque de sintaxe e vê o resultado em tabela, além de uma visão do diagrama das tabelas.
+
+**Importante:** o playground roda em SQLite só para funcionar no navegador sem servidor; o projeto original e todo o SQL documentado aqui são MySQL 8.4.
+
+```bash
+cd web
+npm install
+npm run dev
+```
 
 ---
 
